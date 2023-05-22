@@ -5,7 +5,7 @@ async function obtenerRutinas(req, res) {
   try {
     const rutinas = await Rutina.findAll({
       include: [
-        { model: Ejercicio, attributes: ['id', 'nombre', 'video'] },
+        { model: Ejercicio },
         { model: Usuario, attributes: ['id', 'nombre', 'apellido'] },
       ],
     });
@@ -30,8 +30,26 @@ async function crearRutina(req, res) {
   }
 }
 
+// Borrar rutina
+async function borrarRutina(req, res) {
+  const { id } = req.params;
+  try {
+    const rutina = await Rutina.findByPk(id);
+    if (!rutina) {
+      return res.status(404).json({ message: 'La rutina no existe.' });
+    }
+    await rutina.destroy();
+    res.status(200).json({ message: 'La rutina fue eliminada.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar la rutina.' });
+  }
+}
+
+
 
 module.exports = {
   obtenerRutinas,
   crearRutina,
+  borrarRutina,
 }
